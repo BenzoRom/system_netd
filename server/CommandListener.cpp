@@ -890,6 +890,42 @@ int CommandListener::BandwidthControlCmd::runCommand(SocketClient *cli, int argc
         sendGenericOkFail(cli, rc);
         return 0;
     }
+    if (!strcmp(argv[1], "addrestrictappsondata")) {
+        if (argc < 4) {
+            sendGenericSyntaxError(cli, "addrestrictappsondata <interface> <appUid> ...");
+            return 0;
+        }
+        int rc = gCtls->bandwidthCtrl.addRestrictAppsOnData(argv[2], argc - 3, argv + 3);
+        sendGenericOkFail(cli, rc);
+        return 0;
+    }
+    if (!strcmp(argv[1], "removerestrictappsondata")) {
+        if (argc < 4) {
+            sendGenericSyntaxError(cli, "removerestrictappsondata <interface> <appUid> ...");
+            return 0;
+        }
+        int rc = gCtls->bandwidthCtrl.removeRestrictAppsOnData(argv[2], argc - 3, argv + 3);
+        sendGenericOkFail(cli, rc);
+        return 0;
+    }
+    if (!strcmp(argv[1], "addrestrictappsonwlan")) {
+        if (argc < 4) {
+            sendGenericSyntaxError(cli, "addrestrictappsonwlan <interface> <appUid> ...");
+            return 0;
+        }
+        int rc = gCtls->bandwidthCtrl.addRestrictAppsOnWlan(argv[2], argc - 3, argv + 3);
+        sendGenericOkFail(cli, rc);
+        return 0;
+    }
+    if (!strcmp(argv[1], "removerestrictappsonwlan")) {
+        if (argc < 4) {
+            sendGenericSyntaxError(cli, "removerestrictappsonwlan <inteface> <appUid> ...");
+            return 0;
+        }
+        int rc = gCtls->bandwidthCtrl.removeRestrictAppsOnWlan(argv[2], argc - 3, argv + 3);
+        sendGenericOkFail(cli, rc);
+        return 0;
+    }
     if (!strcmp(argv[1], "setglobalalert") || !strcmp(argv[1], "sga")) {
         if (argc != 3) {
             sendGenericSyntaxError(cli, "setglobalalert <bytes>");
@@ -1053,62 +1089,6 @@ int CommandListener::IdletimerControlCmd::runCommand(SocketClient *cli, int argc
           cli->sendMsg(ResponseCode::OperationFailed, "Failed to remove interface", false);
         } else {
           cli->sendMsg(ResponseCode::CommandOkay, "Remove success", false);
-        }
-        return 0;
-    }
-    if (!strcmp(argv[1], "addrestrictappsondata")) {
-        if (argc < 4) {
-            cli->sendMsg(ResponseCode::CommandSyntaxError,
-                       "addrestrictappsondata <interface> <appUid> ...", false);
-            return 0;
-        }
-        if (0 != gCtls->bandwidthCtrl.addRestrictAppsOnData(
-                                        argv[2], argc - 3, argv + 3)) {
-          cli->sendMsg(ResponseCode::OperationFailed, "Firewall command failed", false);
-        } else {
-          cli->sendMsg(ResponseCode::CommandOkay, "Firewall command succeeded", false);
-        }
-        return 0;
-    }
-    if (!strcmp(argv[1], "removerestrictappsondata")) {
-        if (argc < 4) {
-            cli->sendMsg(ResponseCode::CommandSyntaxError,
-                       "removerestrictappsondata <interface> <appUid> ...", false);
-            return 0;
-        }
-        if (0 != gCtls->bandwidthCtrl.addRestrictAppsOnData(
-                                        argv[2], argc - 3, argv + 3)) {
-          cli->sendMsg(ResponseCode::OperationFailed, "Firewall command failed", false);
-        } else {
-          cli->sendMsg(ResponseCode::CommandOkay, "Firewall command succeeded", false);
-        }
-        return 0;
-    }
-    if (!strcmp(argv[1], "addrestrictappsonwlan")) {
-        if (argc < 4) {
-            cli->sendMsg(ResponseCode::CommandSyntaxError,
-                         "addrestrictappsonwlan <interface> <appUid> ...", false);
-            return 0;
-        }
-        if (0 != gCtls->bandwidthCtrl.addRestrictAppsOnWlan(
-                                        argv[2], argc - 3, argv + 3)) {
-          cli->sendMsg(ResponseCode::OperationFailed, "Firewall command failed", false);
-        } else {
-          cli->sendMsg(ResponseCode::CommandOkay, "Firewall command succeeded", false);
-        }
-        return 0;
-    }
-    if (!strcmp(argv[1], "removerestrictappsonwlan")) {
-        if (argc < 4) {
-            cli->sendMsg(ResponseCode::CommandSyntaxError,
-                         "removerestrictappsonwlan <inteface> <appUid> ...", false);
-            return 0;
-        }
-        if (0 != gCtls->bandwidthCtrl.addRestrictAppsOnWlan(
-                                        argv[2], argc - 3, argv + 3)) {
-          cli->sendMsg(ResponseCode::OperationFailed, "Firewall command failed", false);
-        } else {
-          cli->sendMsg(ResponseCode::CommandOkay, "Firewall command succeeded", false);
         }
         return 0;
     }

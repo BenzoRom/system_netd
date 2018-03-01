@@ -88,10 +88,10 @@ public:
     int addNiceApps(int numUids, char *appUids[]);
     int removeNiceApps(int numUids, char *appUids[]);
 
-    int addRestrictAppsOnData(const char *iface, int numUids, char *appUids[]);
-    int removeRestrictAppsOnData(const char *iface, int numUids, char *appUids[]);
-    int addRestrictAppsOnWlan(const char *iface, int numUids, char *appUids[]);
-    int removeRestrictAppsOnWlan(const char *iface, int numUids, char *appUids[]);
+    int addRestrictAppsOnData(const std::string& iface, int numUids, char *appUids[]);
+    int removeRestrictAppsOnData(const std::string& iface, int numUids, char *appUids[]);
+    int addRestrictAppsOnWlan(const std::string& iface, int numUids, char *appUids[]);
+    int removeRestrictAppsOnWlan(const std::string& iface, int numUids, char *appUids[]);
 
     int setGlobalAlert(int64_t bytes);
     int removeGlobalAlert();
@@ -130,7 +130,6 @@ public:
     enum IptFullOp { IptFullOpInsert, IptFullOpDelete, IptFullOpAppend };
     enum IptJumpOp { IptJumpReject, IptJumpReturn, IptJumpNoAdd };
     enum IptOp { IptOpInsert, IptOpDelete };
-    enum RestrictAppOp { RestrictAppOpAdd, RestrictAppOpRemove};
     enum QuotaType { QuotaUnique, QuotaShared };
     enum RunCmdErrHandling { RunCmdFailureBad, RunCmdFailureOk };
 #if LOG_NDEBUG
@@ -141,19 +140,12 @@ public:
 
     std::string makeDataSaverCommand(IptablesTarget target, bool enable);
 
-    int manipulateRestrictAppsOnData(const char *iface, const std::vector<std::string>& appStrUids,
-                                     RestrictAppOp appOp);
-
-    int manipulateRestrictAppsOnWlan(const char *iface, const std::vector<std::string>& appStrUids,
-                                     RestrictAppOp appOp);
-
-    int manipulateRestrictAppsInOut(const char *iface, const std::vector<std::string>& appStrUids,
-                                    RestrictAppOp appOp,
-                                    std::list<int /*appUid*/> &restrictAppUids);
+    int manipulateRestrictAppsInOut(const std::string& iface,
+                                    const std::vector<std::string>& appStrUids,
+                                    std::vector<int /*appUid*/>& restrictAppUids, IptOp appOp);
 
     int manipulateRestrictApps(const std::vector<std::string>& appStrUids, const std::string& chain,
-                               std::list<int /*appUid*/> &restrictAppUids,
-                               RestrictAppOp appOp);
+                               std::vector<int /*appUid*/>& restrictAppUids, IptOp appOp);
 
     int manipulateSpecialApps(const std::vector<std::string>& appStrUids, const std::string& chain,
                               IptJumpOp jumpHandling, IptOp appOp);
@@ -206,7 +198,6 @@ public:
     static int (*iptablesRestoreFunction)(IptablesTarget, const std::string&, std::string *);
 
     static const char *opToString(IptOp op);
-    static const char *appOpToString(RestrictAppOp appOp);
     static const char *jumpToString(IptJumpOp jumpHandling);
 
     int64_t mSharedQuotaBytes = 0;
@@ -225,8 +216,8 @@ public:
     std::map<std::string, QuotaInfo> mQuotaIfaces;
     std::set<std::string> mSharedQuotaIfaces;
 
-    std::list<int /*appUid*/> restrictAppUidsOnData;
-    std::list<int /*appUid*/> restrictAppUidsOnWlan;
+    std::vector<int /*appUid*/> restrictAppUidsOnData;
+    std::vector<int /*appUid*/> restrictAppUidsOnWlan;
 };
 
 #endif
